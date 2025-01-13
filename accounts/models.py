@@ -3,11 +3,18 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.contrib.auth.models import BaseUserManager
 # Create your models here.
 
+ROLE_CHOICES = [
+        ('Admin', 'Admin'),
+        ('Manager', 'Manager'),
+        ('Employee', 'Employee'),
+    ]
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, username, password=None, role='employee', **extra_fields):
+    def create_user(self, email, username, password=None, role='Employee', **extra_fields):
         """
         Create and return a user with an email, username, password, and role.
         """
+        if role not in dict(ROLE_CHOICES).keys():
+            raise ValueError(f"{role} is not a valid role.")
         if not email:
             raise ValueError('The Email field must be set')
         email = self.normalize_email(email)
@@ -16,19 +23,24 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, username, password=None, **extra_fields):
+    def create_superuser(self, email, username, password=None, role='Admin', **extra_fields):
         """
         Create and return a superuser with an email, username, and password.
         """
-        extra_fields.setdefault('role', 'admin')
-        return self.create_user(email, username, password, role='admin', **extra_fields)
+        if role not in dict(ROLE_CHOICES).keys():
+            raise ValueError(f"{role} is not a valid role.")
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_staff', True)
+
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+
+        return self.create_user(email, username, password, role=role, **extra_fields)
 
 class CustomUser(AbstractUser):
-    ROLE_CHOICES = [
-        ('Admin', 'Admin'),
-        ('Manager', 'Manager'),
-        ('Employee', 'Employee'),
-    ]
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     objects = CustomUserManager() 

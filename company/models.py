@@ -21,7 +21,7 @@ class Company(models.Model):
 
 
 class Department(models.Model):
-    company = models.ForeignKey(Company, related_name='departments', on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, related_name='departments', on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=255)
 
     @property
@@ -38,8 +38,8 @@ class Department(models.Model):
 
 class Employee(models.Model):
     user = models.OneToOneField('accounts.CustomUser', on_delete=models.CASCADE, related_name='employee')
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='employees')
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='employees')
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='employees', null=True, blank=True)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='employees',null=True, blank=True)
     name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     mobile_number = models.CharField(max_length=15)
@@ -58,7 +58,7 @@ class Employee(models.Model):
         return f"{self.user.username} ({self.company.name})"
     
 class Project(models.Model):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='projects')
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='projects', null=True, blank=True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='projects')
     name = models.CharField(max_length=255)
     description = models.TextField()
