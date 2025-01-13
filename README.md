@@ -221,14 +221,6 @@ Content-Type: application/json
 
 ---
 
-## Notes
-
-1. Replace `{id}` in the endpoints with the actual ID of the employee.
-2. Ensure the JWT token is included in the headers for authenticated requests.
-3. Permissions are enforced to prevent unauthorized access to resources.
-
----
-
 ## Company Management Endpoints
 
 ### 1. List Companies
@@ -583,21 +575,6 @@ Content-Type: application/json
   "stage": "Feedback Provided"
 }
 ```
-
----
-
-## Permissions
-
-Permissions control access to the various endpoints:
-
-1. **IsAdminOrManager**:
-  - Admins have full access to all endpoints.
-  - Managers can view and modify records, but they cannot delete them.
-  - Employees can view their own performance reviews but cannot modify or delete them.
-  - Unauthenticated users have no access.
-
----
-
 ## Notes
 
 1. Replace `{id}` in the endpoints with the actual ID of the company, department, or performance review.
